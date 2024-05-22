@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
-import "github.com/redis/go-redis/v9"
 
 type LockClient interface {
 	SetNEX(ctx context.Context, key string, value string, expiration int64) (int64, error)
@@ -47,6 +48,13 @@ func (c *Client) Get(ctx context.Context, key string) (string, error) {
 		return "", errors.New("key is empty")
 	}
 	return c.client.Do(ctx, "GET", key).Text()
+}
+
+func (c *Client) Set(ctx context.Context, key, value string) (string, error) {
+	if len(key) == 0 || len(value) == 0 {
+		return "", errors.New("key or value is empty")
+	}
+	return c.client.Do(ctx, "SET", key, value).Text()
 }
 
 func (c *Client) SetEX(ctx context.Context, key string, value string, expireSeconds int64) (int64, error) {
