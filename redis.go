@@ -50,6 +50,13 @@ func (c *Client) Get(ctx context.Context, key string) (string, error) {
 	return c.client.Do(ctx, "GET", key).Text()
 }
 
+func (c *Client) Del(ctx context.Context, key string) (string, error) {
+	if len(key) == 0 {
+		return "", errors.New("key is empty")
+	}
+	return c.client.Do(ctx, "DEL", key).Text()
+}
+
 func (c *Client) Set(ctx context.Context, key, value string) (string, error) {
 	if len(key) == 0 || len(value) == 0 {
 		return "", errors.New("key or value is empty")
